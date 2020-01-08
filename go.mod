@@ -13,7 +13,6 @@ require (
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/kubernetes-incubator/external-storage v5.2.0+incompatible
-	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.8.1
@@ -30,3 +29,5 @@ require (
 	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d // indirect
 	k8s.io/kubernetes v1.12.1 // indirect
 )
+
+replace github.com/kubernetes-incubator/external-storage => github.com/kmodules/external-storage v5.2.1-0.20200108110712-e55adbadb4e8+incompatible

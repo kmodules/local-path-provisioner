@@ -77,6 +77,7 @@ const annStorageProvisioner = "volume.beta.kubernetes.io/storage-provisioner"
 // This annotation is added to a PVC that has been triggered by scheduler to
 // be dynamically provisioned. Its value is the name of the selected node.
 const annSelectedNode = "volume.kubernetes.io/selected-node"
+const annAlphaSelectedNode = "volume.alpha.kubernetes.io/selected-node"
 
 // ProvisionController is a controller that provisions PersistentVolumes for
 // PersistentVolumeClaims.
@@ -982,7 +983,7 @@ func (ctrl *ProvisionController) provisionClaimOperation(claim *v1.PersistentVol
 	var allowedTopologies []v1.TopologySelectorTerm
 	if ctrl.kubeVersion.AtLeast(utilversion.MustParseSemantic("v1.11.0")) {
 		// Get SelectedNode
-		if nodeName, ok := claim.Annotations[annSelectedNode]; ok {
+		if nodeName, ok := getString(claim.Annotations, annSelectedNode, annAlphaSelectedNode); ok {
 			selectedNode, err = ctrl.client.CoreV1().Nodes().Get(nodeName, metav1.GetOptions{}) // TODO (verult) cache Nodes
 			if err != nil {
 				err = fmt.Errorf("failed to get target node: %v", err)
@@ -1255,4 +1256,17 @@ func (ctrl *ProvisionController) supportsBlock() bool {
 		return blockProvisioner.SupportsBlock()
 	}
 	return false
+}
+
+func getString(m map[string]string, key string, alts ...string) (string, bool) {
+	if m == nil {
+		return "", false
+	}
+	keys := append([]string{key}, alts...)
+	for _, k := range keys {
+		if v, ok := m[k]; ok {
+			return v, true
+		}
+	}
+	return "", false
 }
